@@ -5,9 +5,10 @@ dist/**/*.js.map
 node_modules/
 src/
 test/
-npm-debug.log
 .editorconfig
+.npmignore
 module-structure-lang-ts.iml
+npm-debug.log
 tsconfig.json
 tsconfig.prod.json
 tslint.json
