@@ -2,6 +2,12 @@
   "name": "module-structure-lang-ts",
   "version": "1.0.0",
   "private": true,
+  "author": "Reinhold Früsmer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rfruesmer/module-structure/issues"
+  },
+  "homepage": "https://github.com/rfruesmer/module-structure#readme",
   "scripts": {
     "build-dev": "tsc -p . && npm run tslint",
     "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p tsconfig.prod.json --outDir dist",
