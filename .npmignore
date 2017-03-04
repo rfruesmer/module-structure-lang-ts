@@ -1,6 +1,7 @@
 .idea/
 .nyc_output/
 coverage/
+dist/**/*.js.map
 node_modules/
 src/
 test/
