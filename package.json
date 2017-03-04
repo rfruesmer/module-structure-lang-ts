@@ -1,0 +1,33 @@
+{
+  "name": "module-structure-lang-ts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build-dev": "tsc -p . && npm run tslint",
+    "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p tsconfig.prod.json --outDir dist",
+    "clean-dist": "rimraf dist/",
+    "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map",
+    "tslint": "tslint --project .",
+    "pretest": "npm run build-dev",
+    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
+    "test": "nyc mocha test/**/*.js"
+  },
+  "extensions": {
+    "module-structure:language": {
+      "ts": "./dist/typescript-dependency-provider"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.5",
+    "chai": "^3.5.0",
+    "codecov": "^1.0.1",
+    "mocha": "^3.2.0",
+    "nyc": "^10.1.2",
+    "rimraf": "^2.6.1",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
+  },
+  "dependencies": {
+    "preconditions": "^2.2.0"
+  }
+}
