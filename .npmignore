@@ -1,0 +1,14 @@
+.idea/
+.nyc_output/
+coverage/
+node_modules/
+src/
+test/
+npm-debug.log
+.editorconfig
+module-structure-lang-ts.iml
+tsconfig.json
+tsconfig.prod.json
+tslint.json
+
+
