@@ -12,7 +12,7 @@
     "build-dev": "tsc -p . && npm run tslint",
     "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p tsconfig.prod.json --outDir dist",
     "clean-dist": "rimraf dist/",
-    "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map",
+    "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map && rimraf test/**/*.js*",
     "tslint": "tslint --project .",
     "pretest": "npm run build-dev",
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",

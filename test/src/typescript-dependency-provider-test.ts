@@ -1,14 +1,19 @@
-const describe = require("mocha").describe;
-const it = require("mocha").it;
-const expect = require("chai").expect;
-const providerFactory = require("../src/typescript-dependency-provider");
+const mocha = require("mocha");
+const describe = mocha.describe;
+const it = mocha.it;
+const chai = require("chai");
+const expect = chai.expect;
+const assert = chai.assert;
+const path = require("path");
+const providerFactory = require("../../src/typescript-dependency-provider");
 
 
-
-describe("typescript-import-parser", function() {
+describe("typescript-dependency-provider", function() {
 
     let source = "";
     let actualImportSources = [];
+    let expectedImportSources = [];
+    let modulePath = "";
 
 
     it("should find entire content import", function() {
@@ -109,5 +114,36 @@ describe("typescript-import-parser", function() {
             "module-h.ts"
         ]);
     });
+
+    it("should provide imports from file", function() {
+        givenModuleFile();
+        whenGettingImportSourcesFromFile();
+        thenImportSourcesShouldMatchExpectedImportSources();
+    });
+
+    function givenModuleFile() {
+        modulePath = path.join(__dirname, "../resources/sample.ts");
+        expectedImportSources = [
+            "./package-a/module-a.ts",
+            "./package-a/module-b.ts",
+            "./package-a/module-c.ts",
+            "./package-b/module-d.ts",
+            "./package-b/module-e.ts",
+            "./package-b/module-f.ts",
+            "./package-b/package-b2/module-g.ts",
+            "./package-b/package-b2/module-h.ts",
+            "./package-b/package-b2/module-i.ts",
+            "./package-b/package-b2/module-j.ts"
+        ];
+    }
+
+    function whenGettingImportSourcesFromFile() {
+        let typeScriptDependencyProvider = providerFactory();
+        actualImportSources = typeScriptDependencyProvider.getDependencies(modulePath);
+    }
+
+    function thenImportSourcesShouldMatchExpectedImportSources() {
+        assert.deepEqual(actualImportSources, expectedImportSources);
+    }
 });
 
