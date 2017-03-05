@@ -1,6 +1,6 @@
 {
   "name": "module-structure-lang-ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "TypeScript language provider for module-structure.",
   "author": "Reinhold Früsmer",
   "license": "MIT",
