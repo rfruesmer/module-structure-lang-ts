@@ -25,6 +25,14 @@ $ npm i -g module-structure-lang-ts
 
 <table align="center">
     <tr>
+        <td>enhanced-resolve</td>
+        <td align="right">
+            <a href="https://www.npmjs.com/package/enhanced-resolve">homepage</a>
+            &nbsp;-&nbsp;
+            <a href="http://spdx.org/licenses/MIT">show license</a>
+        </td>
+    </tr>
+    <tr>
         <td>preconditions</td>
         <td align="right">
             <a href="https://www.npmjs.com/package/preconditions/">homepage</a>

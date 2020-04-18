@@ -12,7 +12,7 @@
     "build-dev": "tsc -p . && npm run tslint",
     "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p tsconfig.prod.json --outDir dist",
     "clean-dist": "rimraf dist/",
-    "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map && rimraf test/**/*.js*",
+    "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map && rimraf test/*.js && rimraf test/**/*.map",
     "tslint": "tslint --project .",
     "pretest": "npm run build-dev",
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
@@ -24,7 +24,7 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^13.11.1",
+    "@types/node": "^13.13.0",
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
     "mocha": "^7.1.1",
@@ -34,6 +34,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "enhanced-resolve": "^4.1.1",
     "preconditions": "^2.2.3"
   }
 }

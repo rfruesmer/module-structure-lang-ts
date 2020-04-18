@@ -19,7 +19,7 @@ describe("typescript-dependency-provider", function() {
     it("should find entire content import", function() {
         givenSource("import * as myModule from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     function givenSource(s) {
@@ -38,55 +38,55 @@ describe("typescript-dependency-provider", function() {
     it("should find single member import", function() {
         givenSource("import {myMember} from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find multiple member import", function() {
         givenSource("import {foo, bar} from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find aliased member import", function() {
         givenSource("import {reallyReallyLongModuleMemberName as shortName} from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find aliased multi member import", function() {
         givenSource("import {reallyReallyLongModuleMemberName as shortName, anotherLongModuleName as short} from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find namespace default import", function() {
         givenSource("import myDefault, * as myModule from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find specific named default import", function() {
         givenSource("import myDefault, {foo, bar} from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should find multiline imports ", function() {
         givenSource("import {\n\tmyMember,\n\t,anotherMember\r\n    someOtherMember\n}\n from \"my-module\";");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should ignore whitespace ", function() {
         givenSource("import { myMember }\n from \"my-module\" ;");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should ignore comments", function() {
         givenSource("// some info\n /** ... */ import {myMember} from \"my-module\";\n// end of file");
         whenGettingImportSources();
-        thenImportSourcesShouldEqual(["my-module.ts"]);
+        thenImportSourcesShouldEqual(["my-module"]);
     });
 
     it("should match multiple modules", function() {
@@ -104,14 +104,14 @@ describe("typescript-dependency-provider", function() {
         givenSource(source);
         whenGettingImportSources();
         thenImportSourcesShouldEqual([
-            "module-a.ts",
-            "module-b.ts",
-            "module-c.ts",
-            "module-d.ts",
-            "module-e.ts",
-            "module-f.ts",
-            "module-g.ts",
-            "module-h.ts"
+            "module-a",
+            "module-b",
+            "module-c",
+            "module-d",
+            "module-e",
+            "module-f",
+            "module-g",
+            "module-h"
         ]);
     });
 
@@ -124,16 +124,17 @@ describe("typescript-dependency-provider", function() {
     function givenModuleFile() {
         modulePath = path.join(__dirname, "../resources/sample.ts");
         expectedImportSources = [
-            "./package-a/module-a.ts",
-            "./package-a/module-b.ts",
-            "./package-a/module-c.ts",
-            "./package-b/module-d.ts",
-            "./package-b/module-e.ts",
-            "./package-b/module-f.ts",
-            "./package-b/package-b2/module-g.ts",
-            "./package-b/package-b2/module-h.ts",
-            "./package-b/package-b2/module-i.ts",
-            "./package-b/package-b2/module-j.ts"
+            "package-a/module-a.ts",
+            "package-a/module-b.ts",
+            "package-a/module-c.js",
+            "package-b/module-d.ts",
+            "package-b/module-e.ts",
+            "package-b/module-f.ts",
+            "package-b/package-b2/module-g.js",
+            "package-b/package-b2/module-h.js",
+            "package-b/package-b2/module-i.ts",
+            "package-b/package-b2/module-j.js",
+            "package-a/App.component.vue"
         ];
     }
 

@@ -7,5 +7,8 @@ coverage/
 dist/
 node_modules/
 src/**/*.js*
-test/**/*.js*
 npm-debug.log
+/test/src/typescript-dependency-provider-test.js
+/test/src/typescript-dependency-provider-test.js.map
+/test/resources/package-a/App.component.vue.js
+/test/resources/sample.js

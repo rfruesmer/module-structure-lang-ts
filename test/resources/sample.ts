@@ -8,3 +8,6 @@ import ClassG1, { ClassG2 } from "./package-b/package-b2/module-g";
 import ClassH1, * as moduleH from "./package-b/package-b2/module-h";
 import ClassI1 from "./package-b/package-b2/module-i";
 import "./package-b/package-b2/module-j";
+import vuetify from "@/plugins/vuetify";
+import App from "@/package-a/App.component.vue";
+
