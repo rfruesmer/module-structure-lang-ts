@@ -10,5 +10,13 @@ src/**/*.js*
 npm-debug.log
 /test/src/typescript-dependency-provider-test.js
 /test/src/typescript-dependency-provider-test.js.map
-/test/resources/package-a/App.component.vue.js
+App.component.vue.js
 /test/resources/sample.js
+/test/resources/app-with-mapped-paths/src/package-a/module-a.js
+/test/resources/app-with-mapped-paths/src/package-a/module-b.js
+/test/resources/app-with-mapped-paths/src/package-b/module-d.js
+/test/resources/app-with-mapped-paths/src/package-b/module-e.js
+/test/resources/app-with-mapped-paths/src/package-b/module-f.js
+/test/resources/app-with-mapped-paths/src/package-b/package-b2/module-i.js
+/test/resources/app-with-mapped-paths/src/sample.js
+/test/resources/app-without-tsconfig/sample.js

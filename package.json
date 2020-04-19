@@ -9,11 +9,11 @@
   },
   "homepage": "https://github.com/rfruesmer/module-structure#readme",
   "scripts": {
-    "build-dev": "tsc -p . && npm run tslint",
-    "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p tsconfig.prod.json --outDir dist",
+    "build-dev": "tsc -p conf/tsconfig.json && npm run tslint",
+    "build-prod": "npm run clean-js && npm run test && npm run clean-dist && tsc -p conf/tsconfig.prod.json --outDir dist",
     "clean-dist": "rimraf dist/",
     "clean-js": "rimraf src/**/*.js && rimraf src/**/*.js.map && rimraf test/*.js && rimraf test/**/*.map",
-    "tslint": "tslint --project .",
+    "tslint": "tslint --project conf/tsconfig.json -c conf/tslint.json",
     "pretest": "npm run build-dev",
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
     "test": "nyc mocha test/**/*.js"
@@ -34,6 +34,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@typescript-eslint/typescript-estree": "^2.28.0",
     "enhanced-resolve": "^4.1.1",
     "preconditions": "^2.2.3"
   }

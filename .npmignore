@@ -1,5 +1,6 @@
 .idea/
 .nyc_output/
+conf/
 coverage/
 dist/**/*.js.map
 node_modules/
@@ -10,8 +11,4 @@ test/
 .travis.yml
 module-structure-lang-ts.iml
 npm-debug.log
-tsconfig.json
-tsconfig.prod.json
-tslint.json
-
 

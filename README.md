@@ -25,6 +25,14 @@ $ npm i -g module-structure-lang-ts
 
 <table align="center">
     <tr>
+        <td>@typescript-eslint/typescript-estree</td>
+        <td align="right">
+            <a href="https://www.npmjs.com/package/@typescript-eslint/typescript-estree">homepage</a>
+            &nbsp;-&nbsp;
+            <a href="https://github.com/typescript-eslint/typescript-eslint/blob/master/LICENSE">show license</a>
+        </td>
+    </tr>
+    <tr>
         <td>enhanced-resolve</td>
         <td align="right">
             <a href="https://www.npmjs.com/package/enhanced-resolve">homepage</a>

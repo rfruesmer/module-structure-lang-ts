@@ -8,17 +8,16 @@
         "experimentalDecorators": true,
         "noImplicitReturns": true,
         "typeRoots": [
-            "node_modules/@types"
+            "../node_modules/@types"
         ],
         "types": [
             "node"
         ]
     },
     "include": [
-        "./src/**/*",
-        "./test/src/**/*"
+        "../src/**/*"
     ],
     "exclude": [
-        "node_modules/*"
+        "../node_modules/*"
     ]
 }

@@ -72,7 +72,7 @@ describe("typescript-dependency-provider", function() {
     });
 
     it("should find multiline imports ", function() {
-        givenSource("import {\n\tmyMember,\n\t,anotherMember\r\n    someOtherMember\n}\n from \"my-module\";");
+        givenSource("import {\n\tmyMember,\n\tanotherMember,\r\n    someOtherMember\n}\n from \"my-module\";");
         whenGettingImportSources();
         thenImportSourcesShouldEqual(["my-module"]);
     });
@@ -95,8 +95,6 @@ describe("typescript-dependency-provider", function() {
             + "import { member } from \"module-c\";\n"
             + "import { member as alias } from \"module-d\";\n"
             + "import { member1 , member2 } from \"module-e\";\n"
-            + "import { member1 , member2 as alias2 , [...] } from \"ignored\";\n"
-            + "import defaultMember, { member [ , [...] ] } from \"ignored\";\n"
             + "import defaultMember, * as alias from \"module-f\";\n"
             + "import defaultMember from \"module-g\";\n"
             + "import \"module-h\";\n";
@@ -115,14 +113,39 @@ describe("typescript-dependency-provider", function() {
         ]);
     });
 
-    it("should provide imports from file", function() {
-        givenModuleFile();
+    it("should provide imports from file without tsconfig", function() {
+        expectedImportSources = [
+            "package-a/module-a.ts",
+            "package-a/module-b.ts",
+            "package-a/module-c.js",
+            "package-b/module-d.ts",
+            "package-b/module-e.ts",
+            "package-b/module-f.ts",
+            "package-b/package-b2/module-g.js",
+            "package-b/package-b2/module-h.js",
+            "package-b/package-b2/module-i.ts",
+            "package-b/package-b2/module-j.js"
+        ];
+
+        givenModuleFile("../resources/app-without-tsconfig/sample.ts");
         whenGettingImportSourcesFromFile();
         thenImportSourcesShouldMatchExpectedImportSources();
     });
 
-    function givenModuleFile() {
-        modulePath = path.join(__dirname, "../resources/sample.ts");
+    function givenModuleFile(relativePath) {
+        modulePath = path.join(__dirname, relativePath);
+    }
+
+    function whenGettingImportSourcesFromFile() {
+        let typeScriptDependencyProvider = providerFactory();
+        actualImportSources = typeScriptDependencyProvider.getDependencies(modulePath);
+    }
+
+    function thenImportSourcesShouldMatchExpectedImportSources() {
+        assert.deepEqual(actualImportSources, expectedImportSources);
+    }
+
+    it("should provide imports from file with mapped paths", function() {
         expectedImportSources = [
             "package-a/module-a.ts",
             "package-a/module-b.ts",
@@ -136,15 +159,10 @@ describe("typescript-dependency-provider", function() {
             "package-b/package-b2/module-j.js",
             "package-a/App.component.vue"
         ];
-    }
 
-    function whenGettingImportSourcesFromFile() {
-        let typeScriptDependencyProvider = providerFactory();
-        actualImportSources = typeScriptDependencyProvider.getDependencies(modulePath);
-    }
-
-    function thenImportSourcesShouldMatchExpectedImportSources() {
-        assert.deepEqual(actualImportSources, expectedImportSources);
-    }
+        givenModuleFile("../resources/app-with-mapped-paths/src/sample.ts");
+        whenGettingImportSourcesFromFile();
+        thenImportSourcesShouldMatchExpectedImportSources();
+    });
 });
 

@@ -1,6 +1,8 @@
 import fs = require("fs");
 import * as enhancedResolve from "enhanced-resolve";
 import {dirname, join, relative} from "path";
+import {AST_NODE_TYPES, parse as parseTypeScript} from "@typescript-eslint/typescript-estree";
+import {TSExternalModuleReference} from "@typescript-eslint/typescript-estree/dist/ts-estree/ts-estree";
 
 const preconditions = require("preconditions").instance();
 const checkArgument = preconditions.checkArgument;
@@ -11,17 +13,12 @@ class MappedPath {
 }
 
 class TypescriptConfig {
+    public baseUrl = "";
     public mappedPaths = new Array<MappedPath>();
 }
 
 
-/**
- *  Simple implementation to allow processing of TypeScript modules - necessary because
- *  TypeScript compiler output cannot be used since it removes even "important" imports.
- */
 export class TypeScriptDependencyProvider {
-    private static readonly COMMENT_REGEXP = /(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/g;
-    private static readonly IMPORT_REGEXP = /import(?:["'\s]*([\w*{\s*}\n, ]+)from\s*)?["'\s]*([@\w\/\._-]+)["'\s]*;?;/g;
     private static readonly PATHSEP_REGEXP = /\\/g;
 
     private readonly resolver;
@@ -35,11 +32,11 @@ export class TypeScriptDependencyProvider {
 
     public getDependencies(modulePath: string): Array<string> {
         checkArgument(fs.existsSync(modulePath) && fs.statSync(modulePath).isFile());
-        let moduleAsString = fs.readFileSync(modulePath, "utf-8");
+        const moduleAsString = fs.readFileSync(modulePath, "utf-8");
         const moduleDir = dirname(modulePath);
-        let tsconfig = this.loadConfig(moduleDir);
+        const tsconfig = this.loadConfig(moduleDir);
 
-        let dependencies = this.getImportSourcesFromString(moduleAsString);
+        const dependencies = this.getImportSourcesFromString(moduleAsString);
         return dependencies
             .map(dependency => this.resolve(modulePath, dependency, tsconfig))
             .filter(dependency => dependency !== undefined)
@@ -47,27 +44,29 @@ export class TypeScriptDependencyProvider {
     }
 
     private loadConfig(moduleDir: string): TypescriptConfig {
-        const configPath = this.findConfigFile(moduleDir);
+        const tsconfig = new TypescriptConfig();
+
+        const configPath = TypeScriptDependencyProvider.findConfigFile(moduleDir);
         if (!configPath) {
-            return null;
+            return tsconfig;
         }
 
         const plainConfig = require(configPath);
         if (!plainConfig.compilerOptions) {
-            return null;
+            return tsconfig;
         }
 
-        const config = new TypescriptConfig();
-
-        if (plainConfig.compilerOptions.baseUrl && plainConfig.compilerOptions.paths) {
-            const baseUrl = join(dirname(configPath), plainConfig.compilerOptions.baseUrl);
-            this.loadPathMappings(plainConfig, baseUrl, config);
+        if (plainConfig.compilerOptions.baseUrl) {
+            tsconfig.baseUrl = join(dirname(configPath), plainConfig.compilerOptions.baseUrl);
+            if (plainConfig.compilerOptions.paths) { // Path mappings require baseUrl property
+                this.loadPathMappings(plainConfig, tsconfig);
+            }
         }
 
-        return config;
+        return tsconfig;
     }
 
-    private findConfigFile(currentDir: string): string {
+    private static findConfigFile(currentDir: string): string {
         let parentDir;
         while (true) {
             const configPath = join(currentDir, "tsconfig.json");
@@ -83,56 +82,39 @@ export class TypeScriptDependencyProvider {
         return null;
     }
 
-    private loadPathMappings(plainConfig: any, baseUrl: string, config: TypescriptConfig) {
+    private loadPathMappings(plainConfig: any, tsconfig: TypescriptConfig): void {
         const paths = Object.keys(plainConfig.compilerOptions.paths);
         paths.forEach(path => {
             const mappings = plainConfig.compilerOptions.paths[path];
-            this.loadPathMapping(path, mappings, baseUrl, config);
+            this.loadPathMapping(path, mappings, tsconfig);
         });
     }
 
-    private loadPathMapping(path: string, mappings: string[], baseUrl: string, config: TypescriptConfig) {
+    private loadPathMapping(path: string, mappings: string[], tsconfig: TypescriptConfig): void {
         path = path.endsWith("/*") ? path.substr(0, path.length - 2) : path;
         mappings.forEach(mapping => {
             mapping = mapping.endsWith("/*") ? mapping.substr(0, mapping.length - 2) : mapping;
-            mapping = join(baseUrl, mapping);
-            config.mappedPaths.push({ key: path, value: mapping });
+            mapping = join(tsconfig.baseUrl, mapping);
+            tsconfig.mappedPaths.push({ key: path, value: mapping });
         });
     }
 
     getImportSourcesFromString(moduleAsString: string): Array<string> {
-        return this.findImportSources(this.removeComments(moduleAsString));
-    }
-
-    private removeComments(str: string): string {
-        return this.replaceAll(str, TypeScriptDependencyProvider.COMMENT_REGEXP, "");
-    }
-
-    private replaceAll(str: string, searchValue: RegExp, replaceValue: string): string {
-        let length = str.length;
-        str = str.replace(searchValue, replaceValue);
-        return str.length === length ? str : this.replaceAll(str, searchValue, replaceValue);
-    }
-
-    private findImportSources(moduleString: string): Array<string> {
-        let matches = TypeScriptDependencyProvider.match(moduleString, TypeScriptDependencyProvider.IMPORT_REGEXP);
-        return matches.filter(match => match.length === 3).map(match => match[2]);
-    }
-
-    private static match(str: string, regExp: RegExp): Array<RegExpExecArray> {
-        let match: RegExpExecArray;
-        let matches: Array<RegExpExecArray> = [];
-
-        while ((match = regExp.exec(str)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (match.index === regExp.lastIndex) {
-                regExp.lastIndex++;
+        const tree = parseTypeScript(moduleAsString);
+        let imports = [];
+        for (let statement of tree.body) {
+            if (statement.type === AST_NODE_TYPES.ImportDeclaration) {
+                imports.push(statement.source.value);
             }
-
-            matches.push(match);
+            else if (statement.type === AST_NODE_TYPES.TSImportEqualsDeclaration) {
+                const moduleReference = statement.moduleReference as TSExternalModuleReference;
+                if (moduleReference.expression.type === AST_NODE_TYPES.Literal) {
+                    imports.push(moduleReference.expression.value);
+                }
+            }
         }
 
-        return matches;
+        return imports;
     }
 
     private resolve(modulePath: string, importSource: string, tsconfig: TypescriptConfig) {
